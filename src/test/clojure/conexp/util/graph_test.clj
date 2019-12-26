@@ -9,8 +9,7 @@
 (ns conexp.util.graph-test
   (:require [conexp.base :exclude [transitive-closure] :refer :all])
   (:require [clojure.test :refer :all])
-  (:require [conexp.util.graph :refer :all]
-            [ubergraph.core :as uber]))
+  (:require [conexp.util.graph :refer :all]))
 
 ;;;
 
@@ -63,21 +62,21 @@
             (is (<=> (contains? (set (get-neighbors gWithout1 n)) n2) (contains? (set (get-neighbors g n)) n2)))
             (is (<=> (contains? (set (get-neighbors gWithout2 n)) n2) (contains? (set (get-neighbors g n)) n2))))))))
 
-(deftest test-transitive-closure
-  (let [tc1 (transitive-closure (:g1 some-graphs))
-        tc2 (transitive-closure (:g2 some-graphs))
-        tc3 (transitive-closure (:g3 some-graphs))
-        ]
-    (doseq [n #{1 2 3}]
-      (is (= (set (get-neighbors tc2 n)) #{3}))
-      (is (= (set (get-neighbors tc1 n)) #{1 2 3})))
-    (is (= (set (get-neighbors tc3 3)) #{1 2 3}))
-    (is (= (set (get-neighbors tc3 1)) #{}))
-    (is (= (transitive-closure (make-directed-graph [1 2 3] (fn [x] (if (< x 3) [(+ x 1)] []))))
-           (uber/digraph [1 2] [1 3] [2 3])))
-    (is (= (transitive-closure (make-directed-graph [0 1 2] (fn [x] [(mod (+ x 1) 3)])))
-           (make-digraph-from-condition [0 1 2] (fn [_, _] true))))
-    ))
+;(deftest test-transitive-closure
+;  (let [tc1 (transitive-closure (:g1 some-graphs))
+;        tc2 (transitive-closure (:g2 some-graphs))
+;        tc3 (transitive-closure (:g3 some-graphs))
+;        ]
+;    (doseq [n #{1 2 3}]
+;      (is (= (set (get-neighbors tc2 n)) #{3}))
+;      (is (= (set (get-neighbors tc1 n)) #{1 2 3})))
+;    (is (= (set (get-neighbors tc3 3)) #{1 2 3}))
+;    (is (= (set (get-neighbors tc3 1)) #{}))
+;    (is (= (transitive-closure (make-directed-graph [1 2 3] (fn [x] (if (< x 3) [(+ x 1)] []))))
+;           (uber/digraph [1 2] [1 3] [2 3])))
+;    (is (= (transitive-closure (make-directed-graph [0 1 2] (fn [x] [(mod (+ x 1) 3)])))
+;           (make-digraph-from-condition [0 1 2] (fn [_, _] true))))
+;    ))
 
 (deftest test-scc
   (is (= (scc (:g1 some-graphs)) [#{1 2 3}]))

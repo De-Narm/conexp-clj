@@ -1,6 +1,5 @@
 (ns conexp.fca.graph
-  (:require [ubergraph.core :as uber]
-            [loom.graph :as lg]
+  (:require [loom.graph :as lg]
             [conexp.fca.lattices :as lat]
             [conexp.util.graph :refer :all]
             [conexp.base :exclude [transitive-closure] :refer :all]))
@@ -93,7 +92,11 @@
   (if (empty? (lg/nodes impl-classes))
     true
     (let [an-edge-of-g (first (lg/nodes impl-classes))
-          the-reversed-edge (uber/find-edge g (lg/dest an-edge-of-g) (lg/src an-edge-of-g))]
+          the-reversed-edge (first 
+                              (filter 
+                                #(and (= (lg/dest %) (lg/src an-edge-of-g))
+                                      (= (lg/src %) (lg/dest an-edge-of-g))) 
+                                (lg/edges g)))]
       (if (lg/has-edge? impl-classes an-edge-of-g the-reversed-edge)
         false                                               ; is only comparability-graph if classes of an-edge-of-g and the-reversed-edge are disjoint
         (let [A1 (lg/successors impl-classes an-edge-of-g)  ; includes an-edge-of-g
@@ -129,13 +132,13 @@
      (union closed-src closed-dest)
      (if (not (empty? open-src))
        (let [new-edges (set (mapcat (fn [e] (filter (fn [d] (not (lg/has-edge? g (lg/dest e) (lg/dest d))))
-                                                    (uber/find-edges g {:src (lg/src e)})))
+                                                    (lg/out-edges g e)))
                                     open-src))
              new-srcs (difference new-edges closed-src open-src)
              new-dests (difference new-edges closed-dest open-dest)]
          (recur g (union closed-src open-src) closed-dest new-srcs (union open-dest new-dests)))
        (let [new-edges (set (mapcat (fn [e] (filter (fn [d] (not (lg/has-edge? g (lg/src e) (lg/src d))))
-                                                    (uber/find-edges g {:dest (lg/dest e)})))
+                                                    (lg/in-edges g e)))
                                     open-dest))
              new-srcs (difference new-edges closed-src open-src)
              new-dests (difference new-edges closed-dest open-dest)]
@@ -151,7 +154,7 @@
      decomp
      (let [e (edge-selection g)
            B (implication-class g e)
-           B-inv (implication-class g (uber/other-direction g e))
+           B-inv (implication-class g [(lg/dest e)(lg/src e)])
            B-overline (union B B-inv)
            g-next (lg/remove-edges* g B-overline)]
        (recur g-next (conj decomp [B B-overline]) edge-selection)))))
@@ -165,7 +168,6 @@
    (decompose g []
               (fn [gr]
                 (first (concat (filter #(lg/has-edge? gr (lg/src %) (lg/dest %))
-                                       ;(map #(uber/edge-description->edge g %) scheme)
                                        scheme)
                                (lg/edges gr)))))))
 
@@ -181,14 +183,13 @@
   See Golumbic 1976,
   \"The Complexity of Comparability Graph Recognition and Coloring\"."
   ([g scheme]
-   (uber/add-directed-edges*
-     (uber/digraph)
+   (lg/add-edges
+     (lg/digraph)
      (mapcat first (graph-decomposition g scheme))))
   ([g]
-   (uber/add-directed-edges*
-     (uber/digraph)
+   (lg/add-edges
+     (lg/digraph)
      (mapcat first (graph-decomposition g)))))
-
 
 ;;; consistency graph
 

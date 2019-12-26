@@ -1,6 +1,5 @@
 (ns conexp.sigmajs.base
-  (:require [ubergraph.core :as uber]
-            [loom.graph :as lg]
+  (:require [loom.graph :as lg]
             [conexp.fca.lattices :as lat]
             [conexp.util.graph :exclude [transitive-closure] :refer :all])
   (:use conexp.base))
@@ -9,7 +8,7 @@
 ;;;
 
 (defn graph->json
-  "Given a graph g (loom or ubergraph), returns the json representation of the
+  "Given a graph g (loom), returns the json representation of the
   graph as required by https://sigmajs.org/."
   ([g]
    (graph->json g (fn [_] [(clojure.core/rand) (clojure.core/rand)])))

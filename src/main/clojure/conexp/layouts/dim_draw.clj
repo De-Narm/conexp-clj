@@ -1,6 +1,5 @@
 (ns conexp.layouts.dim-draw
-  (:require [ubergraph.core :as uber]
-            [loom.graph :as lg]
+  (:require [loom.graph :as lg]
             [conexp.fca.lattices :as lat]
             [conexp.fca.graph :refer :all]
             [conexp.util.graph :refer :all]
