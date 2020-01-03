@@ -29,8 +29,8 @@
   "Constructs a directed graph from a set of nodes and a function that maps a
    node to its neighbors."
   [nodes neighbor-fn]
-  (lg/add-edges
-    (lg/add-nodes (lg/digraph) nodes)
+  (lg/add-edges*
+    (lg/add-nodes* (lg/digraph) nodes)
     (mapcat (fn [x] (map (fn [y] [x y]) (neighbor-fn x))) nodes)))
 
 (defn make-graph-from-condition
@@ -39,7 +39,7 @@
    Edges are undirected, so there will be an edge u<->v iff the condition holds
    for either (u,v) or (v,u) or both."
   [nodes condition]
-  (lg/add-edges
+  (lg/add-edges*
     (apply lg/add-nodes (lg/graph) nodes)
     (mapcat
       (fn [x] (map
@@ -51,7 +51,7 @@
   "Constructs a directed graph from a set of nodes and a condition that tests
    if two nodes shall get an edge."
   [nodes condition]
-  (lg/add-edges
+  (lg/add-edges*
     (apply lg/add-nodes (lg/digraph) nodes)
     (mapcat
       (fn [x] (map
@@ -300,27 +300,27 @@ graph, node a must be equal or later in the sequence."
   ([base edges1]
    (if (instance? clojure.lang.Sequential edges1)
      (transitive-closure
-       (lg/add-edges (transitive-edge-union base)
-                     edges1))
+       (lg/add-edges* (transitive-edge-union base)
+                        edges1))
      (transitive-closure
-       (lg/add-edges (transitive-edge-union base)
-                     (mapcat
-                       (fn [x] (map
-                                 (fn [y] [x y])
-                                 (filter #(edges1 x %) base)))
-                       base)))))
+       (lg/add-edges* (transitive-edge-union base)
+                        (mapcat
+                          (fn [x] (map
+                                    (fn [y] [x y])
+                                    (filter #(edges1 x %) base)))
+                          base)))))
   ([base edges1 & more-edges]
    (if (instance? clojure.lang.Sequential edges1)
      (transitive-closure
-       (lg/add-edges (apply transitive-edge-union base more-edges)
-                     edges1))
+       (lg/add-edges* (apply transitive-edge-union base more-edges)
+                             edges1))
      (transitive-closure
-       (lg/add-edges (apply transitive-edge-union base more-edges)
-                       (mapcat
-                         (fn [x] (map
-                                   (fn [y] [x y])
-                                   (filter #(edges1 x %) base)))
-                         base))))))
+       (lg/add-edges* (apply transitive-edge-union base more-edges)
+                        (mapcat
+                          (fn [x] (map
+                                    (fn [y] [x y])
+                                    (filter #(edges1 x %) base)))
+                          base))))))
 
 ;; End of file
 

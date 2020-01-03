@@ -132,13 +132,13 @@
      (union closed-src closed-dest)
      (if (not (empty? open-src))
        (let [new-edges (set (mapcat (fn [e] (filter (fn [d] (not (lg/has-edge? g (lg/dest e) (lg/dest d))))
-                                                    (lg/out-edges g e)))
+                                                    (lg/out-edges g (lg/src e))))
                                     open-src))
              new-srcs (difference new-edges closed-src open-src)
              new-dests (difference new-edges closed-dest open-dest)]
          (recur g (union closed-src open-src) closed-dest new-srcs (union open-dest new-dests)))
        (let [new-edges (set (mapcat (fn [e] (filter (fn [d] (not (lg/has-edge? g (lg/src e) (lg/src d))))
-                                                    (lg/in-edges g e)))
+                                                    (lg/in-edges g (lg/src e))))
                                     open-dest))
              new-srcs (difference new-edges closed-src open-src)
              new-dests (difference new-edges closed-dest open-dest)]
@@ -183,11 +183,11 @@
   See Golumbic 1976,
   \"The Complexity of Comparability Graph Recognition and Coloring\"."
   ([g scheme]
-   (lg/add-edges
+   (lg/add-edges*
      (lg/digraph)
      (mapcat first (graph-decomposition g scheme))))
   ([g]
-   (lg/add-edges
+   (lg/add-edges*
      (lg/digraph)
      (mapcat first (graph-decomposition g)))))
 
