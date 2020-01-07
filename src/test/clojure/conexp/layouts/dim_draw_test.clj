@@ -246,13 +246,13 @@
          '([2 8] [2 3] [2 9] [2 12] [2 6])))
   (is (= (sat-reduction (tig hyper-cube-like-graph))
          '([10 5] [11 4] [11 6] [6 1] [10 1] [14 1] [14 5] [10 4] [11 5] [9 4] [14 9])))
-  (is (= (sat-reduction (lg/graph [:a :b] [:a :c] [:b :e] [:c :e] [:a :e]) 0)
+  (is (= (sat-reduction (lg/digraph [:a :b] [:a :c] [:b :e] [:c :e] [:a :e]) 0)
          nil))
-  (is (= (sat-reduction (lg/graph [:a :b] [:a :c] [:b :e] [:c :e] [:a :e]) 1)
+  (is (= (sat-reduction (lg/digraph [:a :b] [:a :c] [:b :e] [:c :e] [:a :e]) 1)
          '(:e)))
-  (is (= (sat-reduction (lg/graph [:a :b] [:a :c] [:b :e] [:c :e] [:a :e]) 2)
+  (is (= (sat-reduction (lg/digraph [:a :b] [:a :c] [:b :e] [:c :e] [:a :e]) 2)
          '(:e)))
-  (is (= (sat-reduction (lg/graph [:a :b] [:a :c] [:b :e] [:c :e] [:a :e]))
+  (is (= (sat-reduction (lg/digraph [:a :b] [:a :c] [:b :e] [:c :e] [:a :e]))
          '(:e))))
 
 

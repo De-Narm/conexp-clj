@@ -20,7 +20,8 @@
   #^{:author "Jeffrey Straszheim",
      :doc    "Basic graph theory algorithms"}
   conexp.util.graph
-  (:require [loom.graph :as lg])
+  (:require [loom.graph :as lg]
+            [loom.attr :as la])
   (:use [clojure.set :only (union)])
   (:import [org.dimdraw Transitive]))
 
@@ -30,7 +31,7 @@
    node to its neighbors."
   [nodes neighbor-fn]
   (lg/add-edges*
-    (lg/add-nodes* (lg/digraph) nodes)
+    (la/add-attrs-to-all (lg/add-nodes* (lg/digraph) nodes))
     (mapcat (fn [x] (map (fn [y] [x y]) (neighbor-fn x))) nodes)))
 
 (defn make-graph-from-condition
@@ -76,7 +77,7 @@
 
 (defn edge->vec
   [e]
-  [(:src e) (:dest e)])
+  [(lg/src e) (lg/dest e)])
 
 ;; Graph Modification
 
@@ -155,7 +156,6 @@ visit (ns)."
           ;;                           graph nodes)
           ;;                   graph))
           ;; graph pairs)
-
           graph (. Transitive hull graph)]
       (reduce (fn [g u]
                 (reduce (fn [g v]

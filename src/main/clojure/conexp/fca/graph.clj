@@ -126,7 +126,7 @@
   They are described in Golumbic 1976,
   \"The Complexity of Comparability Graph Recognition and Coloring\"."
   ([g edge]
-   (implication-class g #{} #{} #{edge} #{edge}))
+   (implication-class (lg/build-graph (lg/digraph) g) #{} #{} #{edge} #{edge}))
   ([g closed-src closed-dest open-src open-dest]
    (if (and (empty? open-src) (empty? open-dest))
      (union closed-src closed-dest)
@@ -205,8 +205,9 @@
   introduced in g.
 
   See Definition 2.2 in https://doi.org/10.1006/jagm.1998.0974"
-  [g]
-  (let [incompat-nodes
+  [some-g]
+  (let [g         (lg/build-graph (lg/digraph) some-g)
+        incompat-nodes
         (set (map (fn [e] [(lg/src e) (lg/dest e)])
                   (lg/edges (co-comparability (nodes g) #(lg/has-edge? g %1 %2)))))]
     (make-directed-graph incompat-nodes
