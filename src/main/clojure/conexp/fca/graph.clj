@@ -126,7 +126,7 @@
   They are described in Golumbic 1976,
   \"The Complexity of Comparability Graph Recognition and Coloring\"."
   ([g edge]
-   (implication-class (lg/build-graph (lg/digraph) g) #{} #{} #{edge} #{edge}))
+   (implication-class g #{} #{} #{edge} #{edge}))
   ([g closed-src closed-dest open-src open-dest]
    (if (and (empty? open-src) (empty? open-dest))
      (union closed-src closed-dest)
@@ -138,7 +138,7 @@
              new-dests (difference new-edges closed-dest open-dest)]
          (recur g (union closed-src open-src) closed-dest new-srcs (union open-dest new-dests)))
        (let [new-edges (set (mapcat (fn [e] (filter (fn [d] (not (lg/has-edge? g (lg/src e) (lg/src d))))
-                                                    (lg/in-edges g (lg/src e))))
+                                                    (lg/out-edges g (lg/dest e))))
                                     open-dest))
              new-srcs (difference new-edges closed-src open-src)
              new-dests (difference new-edges closed-dest open-dest)]

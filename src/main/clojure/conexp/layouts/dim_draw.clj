@@ -41,7 +41,6 @@
         (let [first (peek remaining)
               popped (pop remaining)
               newsub (conj final first)
-              ;;              can-insert  (not (in-odd-cycle? graph newsub first))
               can-insert  (not (. Bipartite isInOddCycle (:adj graph) newsub first))
               next-subset (if can-insert
                             newsub
@@ -231,7 +230,7 @@
   ([P <=]
    (let [C (co-comparability P <=)]
      (if (comparability-graph? C)                           ; has transitive orientation?
-       (map edge->vec (lg/edges (transitive-orientation C)))
+       (lg/edges (transitive-orientation C))
        nil))))
 
 
@@ -278,8 +277,8 @@
                      (reset! <=CAtom    ; set new value
                              <=CNew)))
                  @<=CAtom)
-           <=1 (map edge->vec (lg/edges (transitive-edge-union P <= <=C)))
-           <=2 (map edge->vec (lg/edges (transitive-edge-union P <= (map reverse <=C))))
+           <=1 (lg/edges (transitive-edge-union P <= <=C))
+           <=2 (lg/edges (transitive-edge-union P <= (map reverse <=C)))
            elements-less (fn [le elem] (- (count (filter #(some #{[% elem]} le) P)) 1)) ; util function used to compute |{x' | x' <= x}| - 1 for given <= and x
            coords (map #(let
                             [x1 (elements-less <=1 %) x2 (elements-less <=2 %)]

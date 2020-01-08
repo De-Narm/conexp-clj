@@ -75,10 +75,6 @@
   [g n]
   (lg/successors* g n))
 
-(defn edge->vec
-  [e]
-  [(lg/src e) (lg/dest e)])
-
 ;; Graph Modification
 
 (defn reverse-graph
@@ -245,6 +241,7 @@ exception. Set max to nil for unlimited iterations."
                    new-data
                    (recur new-data (and idx (dec idx))))))]
     (step data max)))
+
 (defn- fold-into-sets
   [priorities]
   (let [max (inc (apply max 0 (vals priorities)))
@@ -253,6 +250,7 @@ exception. Set max to nil for unlimited iterations."
     (reduce step
             (vec (replicate max #{}))
             priorities)))
+
 (defn dependency-list
   "Similar to a topological sort, this returns a vector of sets. The
 set of nodes at index 0 are independent. The set at index 1 depend
@@ -269,6 +267,7 @@ much be acyclic) has an edge a->b when a depends on b."
                             (inc (count (nodes g)))
                             =)]
     (fold-into-sets counts)))
+
 (defn stratification-list
   "Similar to dependency-list (see doc), except two graphs are
 provided. The first is as dependency-list. The second (which may
