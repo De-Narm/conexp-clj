@@ -9,6 +9,7 @@
 (ns conexp.fca.implications
   "Implications for Formal Concept Analysis."
   (:require [clojure.core.reducers :as r]
+            [clojure.set :as s]
             [conexp.base :refer :all]
             [conexp.fca.contexts :refer :all]))
 
@@ -494,6 +495,37 @@
                    all)))))))
 
 (defalias canonical-base-from-base stem-base-from-base)
+
+;;;Impec
+
+(defn direct-canonical-base
+  "Computes the direct canonical base with the Impec algorithm from a set and
+   a closure operator on the set.
+   See Section 6, Rafik Taouil, Yves Bastide, July 2010:
+   https://www.researchgate.net/publication/281327547_Computing_Proper_Implications"
+  [base-set closure]
+  (let [implications (atom {#{} (closure #{})})]
+    (dorun (for [element base-set]
+      (let [tmp-impls (atom @implications)]
+        (dorun (for [[A rhsA] @tmp-impls]; :when (empty? rhsA)]
+          (let [extension (conj A element)
+                concl     (atom (s/difference (closure extension) extension))]
+            (if (not-empty @concl)
+              (do 
+                (dorun (for [[B rhsB] @tmp-impls
+                        :when (proper-superset? B A)]
+                  (if (s/subset? 
+                        (s/difference B A)
+                        @concl)
+                      (swap! tmp-impls dissoc B))))
+                (dorun (for [[B rhsB] @tmp-impls
+                        :when (proper-subset? B extension)]
+                  (swap! concl s/difference rhsB)))))
+            (swap! implications assoc-in [extension] @concl)
+            (swap! tmp-impls assoc-in [extension] @concl)))))))
+    (for [[k v] @implications :when (and (not (empty? k))
+                                         (not (empty? v)))] 
+         (make-implication k v))))
 
 ;;; Association Rules
 
