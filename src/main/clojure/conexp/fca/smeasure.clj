@@ -72,6 +72,34 @@
   (and (instance? ScaleMeasure sm)
        (valid-scale-measure? sm)))
 
+;; product
+
+(defn smeasure-product
+  "Combines two smeasures with the specified method. If no method is
+   given the semiproduct is used."
+   ([sma smb]
+      (smeasure-product sma smb :semi))
+   ([sma smb method]
+      (case method
+        :semi   (make-smeasure-nc
+                  (context-semiproduct (context sma) 
+                                       (context smb))
+                  (context-semiproduct (scale sma)
+                                       (scale smb))
+                  (apply merge 
+                    (for [[ka va] (measure sma) [kb vb] (measure smb)]
+                          {[ka kb] (for [a va b vb] [a b])})))
+        :direct (make-smeasure-nc
+                  (context-product (context sma) 
+                                   (context smb))
+                  (context-product (scale sma)
+                                   (scale smb))
+                  (apply merge 
+                    (for [[ka va] (measure sma) [kb vb] (measure smb)]
+                          {[ka kb] (distinct (for [a va b vb] [a b]))}))))))
+
+;; cluster
+
 (defn cluster-attributes-ex [sm attr]
   (let [ctx (context sm)
         s (scale sm)]
