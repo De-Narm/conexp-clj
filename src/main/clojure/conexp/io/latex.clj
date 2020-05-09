@@ -18,21 +18,24 @@
 
 (defn tex-escape
   "Escapes all significant characters used by LaTeX."
-  [string]
-  (clojure.string/escape 
-    string 
-    {\& "\\&"
-     \% "\\%"
-     \$ "\\$"
-     \# "\\#"
-     \_ "\\_"
-     \{ "\\{"
-     \} "\\}"
-     \< "\\textless "
-     \> "\\textgreater "
-     \~ "\\textasciitilde "
-     \^ "\\textasciicircum "
-     \\ "\\textbackslash "}))
+  [thing]
+  (let [string (if (set? thing)
+                   (clojure.string/replace-first (str thing) #"#" "")
+                   (str thing))]
+    (clojure.string/escape 
+      string 
+      {\& "\\&"
+       \% "\\%"
+       \$ "\\$"
+       \# "\\#"
+       \_ "\\_"
+       \{ "\\{"
+       \} "\\}"
+       \< "\\textless "
+       \> "\\textgreater "
+       \~ "\\textasciitilde "
+       \^ "\\textasciicircum "
+       \\ "\\textbackslash "})))
 
 ;;;
 
