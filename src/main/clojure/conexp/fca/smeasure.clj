@@ -86,17 +86,13 @@
                                        (context smb))
                   (context-semiproduct (scale sma)
                                        (scale smb))
-                  (apply merge 
-                    (for [[ka va] (measure sma) [kb vb] (measure smb)]
-                          {[ka kb] (for [a va b vb] [a b])})))
+                  #(vector ((measure sma) %) ((measure smb) %)))
         :direct (make-smeasure-nc
                   (context-product (context sma) 
                                    (context smb))
                   (context-product (scale sma)
                                    (scale smb))
-                  (apply merge 
-                    (for [[ka va] (measure sma) [kb vb] (measure smb)]
-                          {[ka kb] (distinct (for [a va b vb] [a b]))}))))))
+                  #(vector ((measure sma) %) ((measure smb) %))))))
 
 ;; cluster
 
